@@ -1,0 +1,251 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>People Analytics Dashboard</title>
+ <link rel="stylesheet" href="{%static 'styles/style.css'%}">
+
+  <style>
+ * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #2573c2;
+  color: #333;
+  line-height: 1.6;
+  padding: 20px;
+}
+
+.dashboard {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2, h3 {
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+nav {
+  margin: 20px 0;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+nav button {
+  padding: 10px 16px;
+  background-color: #3498db;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+nav button:hover {
+  background-color: #2980b9;
+}
+
+.employee-card {
+  background-color: #ecf0f1;
+  border-left: 6px solid #3498db;
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: 10px;
+  transition: transform 0.3s;
+}
+
+.employee-card:hover {
+  transform: scale(1.02);
+}
+
+.employee-card h2 {
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.employee-card p {
+  margin: 4px 0;
+}
+
+.pension {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.available-jobs {
+  margin-top: 30px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-left: 5px solid #2ecc71;
+  border-radius: 10px;
+}
+
+.available-jobs ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.available-jobs li {
+  padding: 8px 0;
+  font-weight: bold;
+}
+
+section#employee-details {
+  margin-top: 40px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#search {
+  padding: 10px;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+table th,
+table td {
+  padding: 12px 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+table thead {
+  background-color: #3498db;
+  color: white;
+}
+
+table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+footer {
+  margin-top: 50px;
+  text-align: center;
+  color: #777;
+  font-size: 14px;
+}
+
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <h1>People Analytics Dashboard</h1>
+
+    <div id="employee-container">
+    
+
+    </div>
+
+    <div class="available-jobs">
+      <h3>Available Job Positions:</h3>
+      <ul>
+        <li>Data Analyst</li>
+        <li>IT Support Technician</li>
+        <li>Marketing Associate</li>
+      </ul>
+    </div>
+  </div>
+
+   </style>
+</head>
+<body>
+
+  <h1>People Analytics Dashboard</h1>
+
+  <div id="employee-container">
+    <!-- Employee cards will appear here -->
+  </div>
+
+  <script>
+    async function loadEmployees() {
+      try {
+        const res = await fetch('/api/employees/');
+        const employees = await res.json();
+        const container = document.getElementById('employee-container');
+
+        employees.forEach(emp => {
+          const retirementNote = emp.retirement_note ? `<span class="pension">(${emp.retirement_note})</span>` : '';
+          const card = `
+            <div class="employee-card">
+              <h2>${emp.name}</h2>
+              <p><strong>Job Position:</strong> ${emp.position}</p>
+              <p><strong>Age:</strong> ${emp.age} ${retirementNote}</p>
+              <p><strong>Contract Years:</strong> ${emp.contract_years}</p>
+              <p><strong>Shift:</strong> ${emp.shift}</p>
+              <p><strong>Performance:</strong> ⭐ ${emp.performance}</p>
+            </div>
+          `;
+          container.innerHTML += card;
+        });
+      } catch (error) {
+        console.error('Failed to load employees:', error);
+        document.getElementById('employee-container').innerHTML = `<p style="color:red;">Unable to fetch employee data.</p>`;
+      }
+    }
+
+    window.onload = loadEmployees;
+  </script>
+
+  
+   <nav>
+        <button onclick="showOverview()">Overview</button>
+        <button onclick="showDemographics()">Demographics</button>
+        <button onclick="showCompensation()">Compensation</button>
+        <button onclick="showEmployeeDetails()">Employee Details</button>
+    </nav>
+    <section id="employee-details">
+        <h2>Employee Details</h2>
+        <input type="text" id="search" placeholder="Search employees...">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Position</th>
+                    <th>Department</th>
+                    <th>Salary</th>
+                    <th>Experience</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            
+                <!-- Rows of employee data go here -->
+
+                
+
+            </tbody>
+        </table>
+    </section>
+    
+
+</body>
+    <footer>
+        <p>&copy; 2023 Your Company Name. All Rights Reserved.</p>
+    </footer>
+</html>
