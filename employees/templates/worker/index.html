@@ -217,30 +217,98 @@ footer {
         <button onclick="showCompensation()">Compensation</button>
         <button onclick="showEmployeeDetails()">Employee Details</button>
     </nav>
-    <section id="employee-details">
-        <h2>Employee Details</h2>
-        <input type="text" id="search" placeholder="Search employees...">
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Position</th>
-                    <th>Department</th>
-                    <th>Salary</th>
-                    <th>Experience</th>
-                    <th>Email</th>
-                </tr>
-            </thead>
+     </style>
+</head>
+<body>
 
-            <tbody>
-            
-                <!-- Rows of employee data go here -->
+  <section id="employee-details">
+    <h2>Employee Details</h2>
+    <input type="text" id="search" placeholder="Search employees...">
+    <button id="search-btn">Search</button>
 
-                
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Position</th>
+          <th>Department</th>
+          <th>Salary</th>
+          <th>Experience</th>
+          <th>Email</th>
+          <th>Performance</th>
 
-            </tbody>
-        </table>
+        </tr>
+      </thead>
+      <tbody id="employee-table-body">
+        <!-- JS will inject employee rows here -->
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ✅ Place your script here -->
+  <script>
+    let allEmployees = [];
+
+    async function loadEmployees() {
+      try {
+        const res = await fetch('/api/employees/');
+        const employees = await res.json();
+        allEmployees = employees;
+        buildEmployeeTable(employees);
+      } catch (error) {
+        console.error('Unable to fetch employee data:', error);
+        const tbody = document.getElementById('employee-table-body');
+        tbody.innerHTML = `<tr><td colspan="7" style="color:red;">Unable to fetch employee data.</td></tr>`;
+      }
+    }
+
+    function buildEmployeeTable(employees) {
+      const tbody = document.getElementById('employee-table-body');
+      tbody.innerHTML = '';
+
+      employees.forEach(emp => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+          <td>${emp.name}</td>
+          <td>${emp.age}</td>
+          <td>${emp.position}</td>
+          <td>${emp.department}</td>
+          <td>R ${parseFloat(emp.salary).toLocaleString()}</td>
+          <td>${emp.experience}</td>
+          <td>${emp.email}</td>
+          <td>R ${parseFloat(emp.performance).toLocaleString()}</td>
+        `;
+
+        tbody.appendChild(row);
+      });
+
+      if (employees.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7">No employees found.</td></tr>`;
+      }
+    }
+
+    function filterEmployeeTable() {
+      const filter = document.getElementById('search').value.toLowerCase();
+      const filtered = allEmployees.filter(emp =>
+        Object.values(emp).some(val =>
+          String(val).toLowerCase().includes(filter)
+        )
+      );
+      buildEmployeeTable(filtered);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadEmployees();
+
+      document.getElementById('search-btn').addEventListener('click', filterEmployeeTable);
+      document.getElementById('search').addEventListener('keyup', function (e) {
+        if (e.key === 'Enter') filterEmployeeTable();
+      });
+    });
+  </script>
+
     </section>
     
 

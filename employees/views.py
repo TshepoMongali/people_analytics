@@ -17,7 +17,9 @@ def employee_list(request):
             "contract_years": emp.contract_years,
             "shift": emp.shift,
             "performance": emp.performance,
-            "retirement_note": "almost due to pension" if emp.age > 55 else ""
+            "email": emp.email,
+            "retirement_note": "almost due to pension" if emp.age > 55 else "",
+            "performance_note":"keep up with work" if emp.performance <5 else "good work"
         })
 
     return JsonResponse(data, safe=False)
